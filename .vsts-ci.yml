@@ -19,7 +19,7 @@ phases:
         PYTHON_ARCH: "64"
 
   variables:
-    SHELL: "windows"
+    SHELL: "windows" SHELL2: "windows2" SHELL3: "windows3"
     system.debug: 'true'
 
   steps:
