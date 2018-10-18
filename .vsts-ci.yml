@@ -26,6 +26,7 @@ phases:
 
   # Install Python (from the official .msi of http://python.org) and pip when not already installed.
   - powershell: if (-not(Test-Path($env:PYTHON))) { & _appveyor\install.ps1 }
+    displayName: Install Python if not found
 
   # Prepend newly installed Python to the PATH of this build.
   # This cannot be done from inside the PowerShell script as it would require to restart the parent CMD process.
@@ -33,19 +34,23 @@ phases:
       SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%
       echo %PATH%
       SET PYTHONIOENCODING=utf-8
+    displayName: add Python to PATH
 
   # Check that we have the expected version and architecture for Python
   - script: |
       python --version
       python -c "import struct; print(struct.calcsize('P') * 8)"
       pip --version
+    displayName: Check Python version
 
   # Upgrade to the latest version of pip to avoid it displaying warnings about it being out of date.
   - script: |
-      pip install --disable-pip-version-check --user --upgrade pip
+      python -m pip install --disable-pip-version-check --user --upgrade pip
       pip install -e . --upgrade
       pipenv install --system --dev --skip-lock
+    displayName: Install dependencies
 
   # Run tests
   #- script: pipenv run pytest -n 8 tests/test_pipenv.py tests/test_project.py tests/test_utils.py
   - script: pipenv run pytest -n 8 tests/test_project.py
+    displayName: Run tests
